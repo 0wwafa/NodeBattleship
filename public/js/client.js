@@ -4,53 +4,55 @@ var winCountYou = 0;
 var winCountOpponent = 0;
 
 function sound(src) {
-	this.sound = document.createElement("audio");
-	this.sound.src = src;
-	this.sound.setAttribute("preload", "auto");
-	this.sound.setAttribute("controls", "none");
-	this.sound.style.display = "none";
-	document.body.appendChild(this.sound);
-	this.play = function(){
-		this.sound.play();
-	}
-	this.stop = function(){
-		this.sound.pause();
-	}
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function () {
+    this.sound.play();
+  }
+  this.stop = function () {
+    this.sound.pause();
+  }
 }
-var soundHit=new sound("boom.mp3");
-var soundMiss=new sound("miss.mp3");
-var soundSink=new sound("sink.mp3");
-var soundGameOver=new sound("gameOver.mp3");
+var soundHit = new sound("boom.mp3");
+var soundMiss = new sound("miss.mp3");
+var soundSink = new sound("sink.mp3");
+var soundGameOver = new sound("gameOver.mp3");
+var soundYouWin = new sound("youWin.mp3");
+var soundYouLoose = new sound("youLoose.mp3");
 
-$(function() {
+$(function () {
 
-  socket.on('playSoundHit', function() {
+  socket.on('playSoundHit', function () {
     soundHit.play();
   });
 
-  socket.on('playSoundMiss', function() {
+  socket.on('playSoundMiss', function () {
     soundMiss.play();
   });
 
-  socket.on('playSoundSink', function() {
+  socket.on('playSoundSink', function () {
     soundSink.play();
   });
 
   /**
    * Successfully connected to server event
    */
-  socket.on('connect', function() {
+  socket.on('connect', function () {
     console.log('Connected to server.');
     winCountYou = 0;
     winCountOpponent = 0;
     $('#disconnected').hide();
-    $('#waiting-room').show();   
+    $('#waiting-room').show();
   });
 
   /**
    * Disconnected from server event
    */
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     console.log('Disconnected from server.');
     $('#waiting-room').hide();
     $('#game').hide();
@@ -60,7 +62,7 @@ $(function() {
   /**
    * User has joined a game
    */
-  socket.on('join', function(gameId) {
+  socket.on('join', function (gameId) {
     nbOfGames = gameId;
     Game.initGame();
     updateWinCounts();
@@ -74,7 +76,7 @@ $(function() {
   /**
    * Update player's game state
    */
-  socket.on('update', function(gameState) {    
+  socket.on('update', function (gameState) {
     Game.setTurn(gameState.turn);
     Game.updateGrid(gameState.gridIndex, gameState.grid);
   });
@@ -82,7 +84,7 @@ $(function() {
   /**
    * Game chat message
    */
-  socket.on('chat', function(msg) {
+  socket.on('chat', function (msg) {
     $('#messages').append('<li><strong>' + msg.name + ':</strong> ' + msg.message + '</li>');
     $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
   });
@@ -90,35 +92,37 @@ $(function() {
   /**
    * Game notification
    */
-  socket.on('notification', function(msg) {
+  socket.on('notification', function (msg) {
     $('#messages').append('<li>' + msg.message + '</li>');
     $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
   });
 
   function updateWinCounts() {
     $('#you').html("<h3>Sen - " + winCountYou + "</h3>");
-    $('#opponent').html("<h3>Rakibin - "+winCountOpponent+"</h3>");
+    $('#opponent').html("<h3>Rakibin - " + winCountOpponent + "</h3>");
   }
 
   /**
    * Change game status to game over
    */
-  socket.on('gameover', function(isWinner) {
+  socket.on('gameover', function (isWinner) {
     console.log('gameover');
-    if(isWinner) {
+    if (isWinner) {
       winCountYou++;
+      soundYouWin.play();
     } else {
       winCountOpponent++;
+      soundYouLoose.play();
     }
     updateWinCounts();
-    soundGameOver.play();
+    //soundGameOver.play();
     Game.setGameOver(isWinner);
   });
-  
+
   /**
    * Leave game and join waiting room
    */
-  socket.on('leave', function() {
+  socket.on('leave', function () {
     $('#game').hide();
     $('#waiting-room').show();
   });
@@ -126,7 +130,7 @@ $(function() {
   /**
    * Send chat message to server
    */
-  $('#message-form').submit(function() {
+  $('#message-form').submit(function () {
     socket.emit('chat', $('#message').val());
     $('#message').val('');
     return false;
