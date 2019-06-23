@@ -4,7 +4,7 @@ var GameStatus = {
 }
 
 var Game = (function() {
-  var canvas = [], context = [], grid = [],
+  var win = 0, canvas = [], context = [], grid = [],
       gridHeight = 361, gridWidth = 361, gridBorder = 1,
       gridRows = 10, gridCols = 10, markPadding = 10, shipPadding = 3,
       squareHeight = (gridHeight - gridBorder * gridRows - gridBorder) / gridRows,
@@ -103,8 +103,9 @@ var Game = (function() {
    * @returns {undefined}
    */
   function updateGrid(player, gridState) {
+    soundNotPlayedYet = true;
     grid[player] = gridState;
-    drawGrid(player);
+    drawGrid(player);    
   };
 
   /**
@@ -117,9 +118,9 @@ var Game = (function() {
       turn = turnState;
 
       if(turn) {
-        $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('It\'s your turn!');
+        $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('Sıra sende!');
       } else {
-        $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Waiting for opponent.');
+        $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Rakibin hamlesi bekleniyor.');
       }
     }
   };
@@ -134,10 +135,10 @@ var Game = (function() {
     
     if(isWinner) {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-winner').html('You won! <a href="#" class="btn-leave-game">Play again</a>.');
+              .addClass('alert-winner').html('Kazandın :) <a href="#" class="btn-leave-game">Tekrar oyna</a>.');
     } else {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-loser').html('You lost. <a href="#" class="btn-leave-game">Play again</a>.');
+              .addClass('alert-loser').html('Kaybettin. <a href="#" class="btn-leave-game">Tekrar oyna</a>.');
     }
     $('.btn-leave-game').click(sendLeaveRequest);
   }
@@ -204,14 +205,13 @@ var Game = (function() {
       }
     }
   };
-  
+
   /**
    * Draw shot marks on grid (black crosses for missed and red circles for hits)
    * @param {Number} gridIndex
    */
-  function drawMarks(gridIndex) {
+  function drawMarks(gridIndex) {	  
     var i, j, squareX, squareY;
-
     for(i = 0; i < gridRows; i++) {
       for(j = 0; j < gridCols; j++) {
         squareX = j * (squareWidth + gridBorder) + gridBorder;
@@ -228,7 +228,7 @@ var Game = (function() {
           context[gridIndex].stroke();
         }
         // draw red circle if hit on square
-        else if(grid[gridIndex].shots[i * gridCols + j] === 2) {
+        else if(grid[gridIndex].shots[i * gridCols + j] === 2) {          
           context[gridIndex].beginPath();
           context[gridIndex].arc(squareX + squareWidth / 2, squareY + squareWidth / 2,
                                  squareWidth / 2 - markPadding, 0, 2 * Math.PI, false);

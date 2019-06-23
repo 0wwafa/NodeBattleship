@@ -12,6 +12,7 @@ function Player(id) {
   this.shots = Array(Settings.gridRows * Settings.gridCols);
   this.shipGrid = Array(Settings.gridRows * Settings.gridCols);
   this.ships = [];
+  this.prevShipsLeft = -1;
 
   for(i = 0; i < Settings.gridRows * Settings.gridCols; i++) {
     this.shots[i] = 0;

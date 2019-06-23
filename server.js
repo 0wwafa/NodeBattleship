@@ -11,7 +11,7 @@ var GameStatus = require('./app/gameStatus.js');
 var port = 8900;
 
 var users = {};
-var gameIdCounter = 1;
+var gameIdCounter = 0;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -20,6 +20,7 @@ http.listen(port, function(){
 });
 
 io.on('connection', function(socket) {
+  gameIdCounter = 1;
   console.log((new Date().toISOString()) + ' ID ' + socket.id + ' connected.');
 
   // create user object for additional data
@@ -65,8 +66,15 @@ io.on('connection', function(socket) {
 
         if(game.shoot(position)) {
           // Valid shot
+          if(game.hit) {
+            io.to(socket.id).emit('playSoundHit');
+          } else {
+            io.to(socket.id).emit('playSoundMiss');
+          }
+          if(game.sink) {
+            io.to(socket.id).emit('playSoundSink');
+          }
           checkGameOver(game);
-
           // Update game state on both clients.
           io.to(socket.id).emit('update', game.getGameState(users[socket.id].player, opponent));
           io.to(game.getPlayerId(opponent)).emit('update', game.getGameState(opponent, opponent));
@@ -142,7 +150,7 @@ function leaveGame(socket) {
 
     // Notifty opponent
     socket.broadcast.to('game' + users[socket.id].inGame.id).emit('notification', {
-      message: 'Opponent has left the game'
+      message: 'Rakibin çıktı.'
     });
 
     if(users[socket.id].inGame.gameStatus !== GameStatus.gameOver) {

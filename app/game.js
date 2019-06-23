@@ -13,7 +13,8 @@ function BattleshipGame(id, idPlayer1, idPlayer2) {
   this.currentPlayer = Math.floor(Math.random() * 2);
   this.winningPlayer = null;
   this.gameStatus = GameStatus.inProgress;
-
+  this.hit = false;
+  this.sink = false;
   this.players = [new Player(idPlayer1), new Player(idPlayer2)];
 }
 
@@ -78,9 +79,20 @@ BattleshipGame.prototype.shoot = function(position) {
   if(this.players[opponent].shots[gridIndex] === 0 && this.gameStatus === GameStatus.inProgress) {
     // Square has not been shot at yet.
     if(!this.players[opponent].shoot(gridIndex)) {
-      // Miss
+      //Miss
+      this.hit = false;
       this.switchPlayer();
+    } else {
+      this.hit = true;
     }
+
+    if(this.players[opponent].prevShipsLeft != -1 && this.players[opponent].prevShipsLeft != this.players[opponent].getShipsLeft()) {
+      this.sink = true;
+    } else {
+      this.sink = false;
+    }
+
+    this.players[opponent].prevShipsLeft = this.players[opponent].getShipsLeft();
 
     // Check if game over
     if(this.players[opponent].getShipsLeft() <= 0) {

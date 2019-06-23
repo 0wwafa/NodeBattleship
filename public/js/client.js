@@ -1,11 +1,48 @@
 var socket = io();
+var nbOfGames;
+var winCountYou = 0;
+var winCountOpponent = 0;
+
+function sound(src) {
+	this.sound = document.createElement("audio");
+	this.sound.src = src;
+	this.sound.setAttribute("preload", "auto");
+	this.sound.setAttribute("controls", "none");
+	this.sound.style.display = "none";
+	document.body.appendChild(this.sound);
+	this.play = function(){
+		this.sound.play();
+	}
+	this.stop = function(){
+		this.sound.pause();
+	}
+}
+var soundHit=new sound("boom.mp3");
+var soundMiss=new sound("miss.mp3");
+var soundSink=new sound("sink.mp3");
+var soundGameOver=new sound("gameOver.mp3");
 
 $(function() {
+
+  socket.on('playSoundHit', function() {
+    soundHit.play();
+  });
+
+  socket.on('playSoundMiss', function() {
+    soundMiss.play();
+  });
+
+  socket.on('playSoundSink', function() {
+    soundSink.play();
+  });
+
   /**
    * Successfully connected to server event
    */
   socket.on('connect', function() {
     console.log('Connected to server.');
+    winCountYou = 0;
+    winCountOpponent = 0;
     $('#disconnected').hide();
     $('#waiting-room').show();   
   });
@@ -24,18 +61,20 @@ $(function() {
    * User has joined a game
    */
   socket.on('join', function(gameId) {
+    nbOfGames = gameId;
     Game.initGame();
+    updateWinCounts();
     $('#messages').empty();
     $('#disconnected').hide();
     $('#waiting-room').hide();
     $('#game').show();
-    $('#game-number').html(gameId);
+    $('#game-number').html(nbOfGames);
   })
 
   /**
    * Update player's game state
    */
-  socket.on('update', function(gameState) {
+  socket.on('update', function(gameState) {    
     Game.setTurn(gameState.turn);
     Game.updateGrid(gameState.gridIndex, gameState.grid);
   });
@@ -56,10 +95,23 @@ $(function() {
     $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
   });
 
+  function updateWinCounts() {
+    $('#you').html("<h3>Sen - " + winCountYou + "</h3>");
+    $('#opponent').html("<h3>Rakibin - "+winCountOpponent+"</h3>");
+  }
+
   /**
    * Change game status to game over
    */
   socket.on('gameover', function(isWinner) {
+    console.log('gameover');
+    if(isWinner) {
+      winCountYou++;
+    } else {
+      winCountOpponent++;
+    }
+    updateWinCounts();
+    soundGameOver.play();
     Game.setGameOver(isWinner);
   });
   
