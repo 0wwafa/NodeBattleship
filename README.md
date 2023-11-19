@@ -19,5 +19,5 @@ Step 3: Start server:
 ```
 nodejs battleship.js &
 ```
-Step 4: Open http://54.146.50.124:8900/ in your browser to play. If you get ERR_CONNECTION_REFUSED, repeat Step 3.
+Step 4: Open http://54.146.50.124:8900/ in your browser to play. Wait for second player to connect (or open a second tab). If you get ERR_CONNECTION_REFUSED, repeat Step 3.
 
