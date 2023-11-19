@@ -9,16 +9,15 @@ the opponent's ships.
 
 ## Install
 
-Step 1: Download/clone.
-```
-git clone https://github.com/inf123/NodeBattleship
-```
+Step 1: Download/clone this repo to your server. You must have nodejs installed.
+
 Step 2: Install dependencies.
 ```
 npm install
 ```
 Step 3: Start server.
 ```
-node server.js
+nodejs battleship.js &
 ```
-Step 4: Open http://yourhost:8900/ in your browser to play.
+Step 4: Open http://54.146.50.124:8900/ in your browser to play. If you get ERR_CONNECTION_REFUSED, connect to server (/home/ubuntu/NodeBattleship) and repeat Step 3.
+
