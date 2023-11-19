@@ -9,7 +9,7 @@ the opponent's ships.
 
 ## Install
 
-Step 1: Connect to server (/home/ubuntu/NodeBattleship). You must have nodejs installed. Download/clone this repo to your server.
+Step 1: Sign in to [Amazon Lightsal VPS](https://lightsail.aws.amazon.com/ls/webapp/home/instances). Navigate to /home/ubuntu/NodeBattleship. You must have nodejs installed. Download/clone this repo to your server.
 
 Step 2: Install dependencies:
 ```
