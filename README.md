@@ -8,8 +8,9 @@ the opponent's ships.
 # Zibri's version
 Added some nice sounds.
 Added the following rules:
-1) ships can't be deployed all the borders, the can touch them though.
+1) ships can't be deployed all the borders, they can touch them though.
 2) submarines can't be placed in the corners
+3) more ships: 1x5 1x4 2x3 3x2 4x1
    
 ![Battleship screenshot](http://inf123.github.io/battleship-screenshot.png)
 
