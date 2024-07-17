@@ -22,7 +22,7 @@ var soundMiss = new sound("miss.mp3");
 var soundSink = new sound("sink.mp3");
 var soundGameOver = new sound("gameOver.mp3");
 var soundYouWin = new sound("youWin.mp3");
-var soundYouLoose = new sound("youLoose.mp3");
+var soundYouLoose = new sound("youLose.mp3");
 
 $(function () {
 
