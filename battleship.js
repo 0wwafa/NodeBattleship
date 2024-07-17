@@ -150,7 +150,7 @@ function leaveGame(socket) {
 
     // Notifty opponent
     socket.broadcast.to('game' + users[socket.id].inGame.id).emit('notification', {
-      message: 'Rakibin çıktı.'
+      message: 'Opponent has left the game.'
     });
 
     if(users[socket.id].inGame.gameStatus !== GameStatus.gameOver) {
