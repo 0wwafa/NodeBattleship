@@ -118,9 +118,9 @@ var Game = (function() {
       turn = turnState;
 
       if(turn) {
-        $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('Sıra sende!');
+        $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('It\s your turn!');
       } else {
-        $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Rakibin hamlesi bekleniyor.');
+        $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Waiting for opponent.');
       }
     }
   };
@@ -135,10 +135,10 @@ var Game = (function() {
     
     if(isWinner) {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-winner').html('Kazandın :) <a href="#" class="btn-leave-game">Tekrar oyna</a>.');
+              .addClass('alert-winner').html('You won! <a href="#" class="btn-leave-game">Play again</a>.');
     } else {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-loser').html('Kaybettin. <a href="#" class="btn-leave-game">Tekrar oyna</a>.');
+              .addClass('alert-loser').html('You lost. <a href="#" class="btn-leave-game">Play again</a>.');
     }
     $('.btn-leave-game').click(sendLeaveRequest);
   }
