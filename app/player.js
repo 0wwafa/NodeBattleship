@@ -79,7 +79,7 @@ Player.prototype.getShipsLeft = function() {
 /**
  * Create ships and place them randomly in grid
  * @returns {Boolean}
- */
+
 Player.prototype.createRandomShips = function() {
   var shipIndex;
 
@@ -95,7 +95,43 @@ Player.prototype.createRandomShips = function() {
   
   return true;
 };
+ */
+ 
 
+Player.prototype.createRandomShips = function() {
+  var shipIndex;
+  var maxAttempts = 100;  // Maximum number of overall attempts
+  var attemptCount = 0;
+
+  while (attemptCount < maxAttempts) {
+    // Clear any existing ships and reset the grid
+    this.ships = [];
+    for (var i = 0; i < Settings.gridRows * Settings.gridCols; i++) {
+      this.shipGrid[i] = -1;
+    }
+
+    var allShipsPlaced = true;
+
+    for (shipIndex = 0; shipIndex < Settings.ships.length; shipIndex++) {
+      var ship = new Ship(Settings.ships[shipIndex]);
+  
+      if (!this.placeShipRandom(ship, shipIndex)) {
+        allShipsPlaced = false;
+        break;
+      }
+
+      this.ships.push(ship);
+    }
+  
+    if (allShipsPlaced) {
+      return true;  // All ships placed successfully
+    }
+
+    attemptCount++;
+  }
+  
+  return false;  // Failed to place all ships after maximum attempts
+};
 /**
  * Try to place a ship randomly in grid without overlapping another ship.
  * @param {Ship} ship
@@ -103,16 +139,41 @@ Player.prototype.createRandomShips = function() {
  * @returns {Boolean}
  */
 Player.prototype.placeShipRandom = function(ship, shipIndex) {
-  var i, j, gridIndex, xMax, yMax, tryMax = 25;
+  var i, j, gridIndex, xMin, xMax, yMin, yMax, tryMax = 100;
 
   for(i = 0; i < tryMax; i++) {
     ship.horizontal = Math.random() < 0.5;
 
-    xMax = ship.horizontal ? Settings.gridCols - ship.size + 1 : Settings.gridCols;
-    yMax = ship.horizontal ? Settings.gridRows : Settings.gridRows - ship.size + 1;
+    if (ship.size === 1) {
+      // For ships of size 1, allow placement anywhere except corners
+      xMin = 0;
+      xMax = Settings.gridCols - 1;
+      yMin = 0;
+      yMax = Settings.gridRows - 1;
+    } else if (ship.horizontal) {
+      // For horizontal ships larger than size 1
+      xMin = 0;
+      xMax = Settings.gridCols - ship.size;
+      yMin = 1;
+      yMax = Settings.gridRows - 2;
+    } else {
+      // For vertical ships larger than size 1
+      xMin = 1;
+      xMax = Settings.gridCols - 2;
+      yMin = 0;
+      yMax = Settings.gridRows - ship.size;
+    }
 
-    ship.x = Math.floor(Math.random() * xMax);
-    ship.y = Math.floor(Math.random() * yMax);
+    ship.x = xMin + Math.floor(Math.random() * (xMax - xMin + 1));
+    ship.y = yMin + Math.floor(Math.random() * (yMax - yMin + 1));
+
+    // Additional check to prevent size 1 ships from being placed in corners
+    if (ship.size === 1 && ((ship.x === 0 && ship.y === 0) || 
+                            (ship.x === 0 && ship.y === Settings.gridRows - 1) ||
+                            (ship.x === Settings.gridCols - 1 && ship.y === 0) ||
+                            (ship.x === Settings.gridCols - 1 && ship.y === Settings.gridRows - 1))) {
+      continue; // Skip this placement and try again
+    }
 
     if(!this.checkShipOverlap(ship) && !this.checkShipAdjacent(ship)) {
       // success - ship does not overlap or is adjacent to other ships
@@ -128,7 +189,6 @@ Player.prototype.placeShipRandom = function(ship, shipIndex) {
   
   return false;
 }
-
 /**
  * Check if a ship overlaps another ship in the grid.
  * @param {Ship} ship
