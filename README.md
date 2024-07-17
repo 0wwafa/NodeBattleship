@@ -5,6 +5,12 @@ At the start of the game, five ships of different sizes are placed randomly in a
 The players then take turns firing shots at the opponent's grid until one player has sunk all of
 the opponent's ships.
 
+# Zibri's version
+Added some nice sounds.
+Added the following rules:
+1) ships can't be deployed all the borders, the can touch them though.
+2) submarines can't be placed in the corners
+   
 ![Battleship screenshot](http://inf123.github.io/battleship-screenshot.png)
 
 ## Install
